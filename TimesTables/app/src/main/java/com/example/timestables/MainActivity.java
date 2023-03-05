@@ -3,9 +3,6 @@ package com.example.timestables;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -22,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     TextView seekBarText;
 
     Integer MAX_VALUE = 99;
-    String SEEKBAR_STATIC_TEXT = "Current Value: ";
 
 
     @Override
@@ -39,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setMax(MAX_VALUE);
 
         // Set initial seek bar text value
-        seekBarText.setText(SEEKBAR_STATIC_TEXT + Integer.toString(seekBar.getProgress() + 1));
+        seekBarText.setText(getString(R.string.seekBarText, seekBar.getProgress() + 1));
 
         // Initialize ArrayList
         arrayList = new ArrayList<>(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20));
@@ -56,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 Integer seekBarValue = progress + 1;
 
                 // Update the seek bar text
-                seekBarText.setText(SEEKBAR_STATIC_TEXT + Integer.toString(seekBarValue));
+                seekBarText.setText(getString(R.string.seekBarText, seekBarValue));
 
                 // loop through all 20 array values and update them
                 for (int i = 0; i < arrayList.size(); i++) {
