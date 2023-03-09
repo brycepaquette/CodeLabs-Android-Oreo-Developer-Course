@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">whatsTheWeather</string>
+    <string name="description">City: %1$s \nDescription: %2$s \nCurrent: %3$s°F \nMin: %4$s°F \nMax: %5$s°F</string>
+</resources>
