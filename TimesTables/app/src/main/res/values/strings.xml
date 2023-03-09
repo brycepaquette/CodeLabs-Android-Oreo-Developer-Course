@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TimesTables</string>
+    <string name="seekBarText">Current Value: %1$d</string>
+</resources>
