@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">NotesApp</string>
+    <string name="alertRemoveNoteTitle">Delete Note</string>
+    <string name="newNote">New Note</string>
+    <string name="alertRemoveNoteMessage">Are you sure you want to delete this note?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="noteRemoved">Deleted Note</string>
+    <string name="notesSpName">notesArray</string>
+    <string name="substringSpName">substringArray</string>
+    <string name="notesSpIndexName">noteIndex</string>
+</resources>
