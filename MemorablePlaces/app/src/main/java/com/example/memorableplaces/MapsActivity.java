@@ -8,6 +8,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -54,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -93,16 +95,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                moveMapsToLocation(location, "Your Location");
             } else {
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
             }
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            moveMapsToLocation(location, "Your Location");
         }
         else {
             Location placeLocation = new Location(LocationManager.GPS_PROVIDER);
-            placeLocation.setLatitude(MainActivity.locations.get(intent.getIntExtra("placeNumber", 0)).latitude);
-            placeLocation.setLongitude(MainActivity.locations.get(intent.getIntExtra("placeNumber", 0)).longitude);
+            placeLocation.setLatitude(MainActivity.latitudes.get(intent.getIntExtra("placeNumber", 0)));
+            placeLocation.setLongitude(MainActivity.longitudes.get(intent.getIntExtra("placeNumber", 0)));
             moveMapsToLocation(placeLocation, MainActivity.locArray.get(intent.getIntExtra("placeNumber", 0)));
         }
 
@@ -111,6 +114,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapLongClick(@NonNull LatLng latLng) {
                 List<Address> addrList = null;
                 String address;
+                SharedPreferences sharedPreferences = MapsActivity.this.getSharedPreferences("com.example.sharedpreferences", Context.MODE_PRIVATE);
                 Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
                 try {
                      addrList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
@@ -122,7 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     address = LocalDate.now().toString();
                     mMap.addMarker(new MarkerOptions().position(latLng).title(address));
                 }
-                else if (addrList.get(0).getThoroughfare() == null || addrList.get(0).getThoroughfare() == "Unnamed Road") {
+                else if (addrList.get(0).getThoroughfare() == null || addrList.get(0).getThoroughfare() == "Unnamed Road" || addrList.get(0).getFeatureName().equals(addrList.get(0).getThoroughfare())) {
                     address = addrList.get(0).getFeatureName();
                     mMap.addMarker(new MarkerOptions().position(latLng).title(address));
                 }
@@ -132,7 +136,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.addMarker(new MarkerOptions().position(latLng).title(address));
                 }
                 MainActivity.locArray.add(address);
-                MainActivity.locations.add(latLng);
+                MainActivity.latitudes.add(latLng.latitude);
+                MainActivity.longitudes.add(latLng.longitude);
+                try {
+                    String serializedLocArray = ObjectSerializer.serialize(MainActivity.locArray);
+                    sharedPreferences.edit().putString("locArray", serializedLocArray).apply();
+                    String serializedLatitudes = ObjectSerializer.serialize(MainActivity.latitudes);
+                    sharedPreferences.edit().putString("latitudes", serializedLatitudes).apply();
+                    String serializedLongitudes = ObjectSerializer.serialize(MainActivity.longitudes);
+                    sharedPreferences.edit().putString("longitudes", serializedLongitudes).apply();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
                 Toast.makeText(MapsActivity.this, "Location Saved!", Toast.LENGTH_SHORT).show();
                 MainActivity.arrayAdapter.notifyDataSetChanged();
             }
