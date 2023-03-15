@@ -3,9 +3,8 @@ package com.example.InstagramClone;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.hardware.input.InputManager;
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
 import com.parse.Parse;
@@ -58,6 +56,13 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         setContentView(R.layout.activity_main);
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
+        // Managers
+        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+
+        // If a user session exists, start the UserListActivity
+        checkIsLoggedIn();
+
         // true = signup, false = login
         toggleBool = true;
 
@@ -75,8 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         // OnKey Listeners
         passwordInput.setOnKeyListener(this);
 
-        // Managers
-        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
 
     }
 
@@ -138,31 +142,18 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
     public void login(View view) {
         if (checkRequiredFields()) {
-            if (ParseUser.getCurrentUser() != null) {
-                ParseUser.logOutInBackground(new LogOutCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            Log.i("USER LOGGED OUT", "The current user was logged out successfully.");
-                        }
-                        else {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
             ParseUser.logInInBackground(usernameInput.getText().toString(), passwordInput.getText().toString(), new LogInCallback() {
                 @Override
                 public void done(ParseUser user, ParseException e) {
                     if (user != null) {
                         Log.i("NewUserLogin", "The user was logged in: " + usernameInput.getText().toString());
                         Toast.makeText(MainActivity.this, "Welcome back " + usernameInput.getText().toString(), Toast.LENGTH_SHORT).show();
+                        showUserList();
                     }
                     else {
                         e.printStackTrace();
                         Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
                 }
             });
         }
@@ -198,6 +189,20 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
 
     public void hideKeyboard(View view) {
         inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void checkIsLoggedIn() {
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user != null) {
+            Toast.makeText(MainActivity.this, "Welcome back " + user.getUsername(), Toast.LENGTH_SHORT).show();
+            showUserList();
+        }
+    }
+
+    public void showUserList() {
+        Intent userListIntent;
+        userListIntent = new Intent(this, UserListActivity.class);
+        startActivity(userListIntent);
     }
 
 
