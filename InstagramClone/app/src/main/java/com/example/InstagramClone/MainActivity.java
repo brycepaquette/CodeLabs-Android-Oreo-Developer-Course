@@ -77,8 +77,11 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
         // Initialize buttonToggle text
         buttonToggle.setText(String.format(getString(R.string.buttonToggle), getString(R.string.loginName)));
 
-        // OnKey Listeners
+        // OnKey Listener
         passwordInput.setOnKeyListener(this);
+
+
+
 
 
 
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnKeyListene
             }
             else {
                 Toast.makeText(this, R.string.toastUserExists, Toast.LENGTH_SHORT).show();
+                toggleButton(buttonToggle);
             }
         }
         else {

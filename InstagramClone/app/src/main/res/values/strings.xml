@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">InstagramClone</string>
+    <string name="signupName">Sign Up</string>
+    <string name="loginName">Login</string>
+    <string name="buttonToggle">or, %1$s</string>
+    <string name="toastRequiredFields">A username and password are required.</string>
+    <string name="toastUserExists">Account already exists for this username.</string>
+
+</resources>

@@ -2,8 +2,11 @@ package com.example.InstagramClone;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -64,5 +67,19 @@ public class UserListActivity extends AppCompatActivity {
                         this,
                         android.R.layout.simple_list_item_1,
                         userListArray));
+
+        userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showUserFeed(position);
+            }
+        });
+
+    }
+
+    public void showUserFeed(int position) {
+        Intent intent = new Intent(getApplicationContext(), UserFeedActivity.class);
+        intent.putExtra("username", userListArray.get(position));
+        startActivity(intent);
     }
 }
